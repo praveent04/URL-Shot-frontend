@@ -2,7 +2,7 @@
 
 // Load environment variables from root .env file (if it exists)
 try {
-  require('dotenv').config({ path: '../.env' });
+  require('dotenv').config({ path: './.env' });
   console.log('Loaded environment variables from root .env file');
 } catch (error) {
   console.log('No .env file found, using system environment variables (normal for production)');
@@ -15,10 +15,15 @@ if (process.env.FRONTEND_PORT) {
 
 // Start the React development server
 const { spawn } = require('child_process');
+const path = require('path');
 
-const child = spawn('react-scripts', ['start'], {
+// Use the local react-scripts binary
+const reactScripts = path.join('node_modules', '.bin', 'react-scripts');
+
+const child = spawn(reactScripts, ['start'], {
   stdio: 'inherit',
-  env: { ...process.env }
+  env: { ...process.env },
+  shell: true // Needed for Windows compatibility
 });
 
 child.on('close', (code) => {
